@@ -32,10 +32,6 @@ variable "worker_initial_upstreams" {
   type = list(string)
 }
 
-variable "boundary_cluster_admin_url" {
-  type = string
-}
-
 variable "boundary_worker_instance_type" {
   type    = string
   default = "t3.small"
