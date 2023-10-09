@@ -51,7 +51,7 @@ locals {
       public_addr = "file:///etc/public_dns"
       controller_generated_activation_token = "${boundary_worker.pki_instance_worker.controller_generated_activation_token}"
 
-      initial_upstreams = ${var.worker_initial_upstreams}
+      initial_upstreams = [ ${var.worker_initial_upstreams} ]
 
       tags {
         type = "public_instance"

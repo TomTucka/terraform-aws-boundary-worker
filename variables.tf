@@ -29,7 +29,7 @@ variable "boundary_worker_subnet_id" {
 }
 
 variable "worker_initial_upstreams" {
-  type = list(string)
+  type = string
 }
 
 variable "boundary_worker_instance_type" {
