@@ -44,19 +44,20 @@ locals {
     disable_mlock = true
 
     listener "tcp" {
-      purpose = "proxy"
-      address = "0.0.0.0:9202"
+      tcp_enabled = false
+      purpose     = "proxy"
+      address     = "0.0.0.0:9202"
     }
 
     worker {
-      auth_storage_path = "/etc/boundary-worker-data"
-      public_addr = "file:///etc/public_dns"
+      auth_storage_path                     = "/etc/boundary-worker-data"
+      public_addr                           = "${var.worker_initial_upstreams}"
       controller_generated_activation_token = "${boundary_worker.pki_instance_worker.controller_generated_activation_token}"
 
-      initial_upstreams = [ "${var.worker_initial_upstreams}" ]
+      initial_upstreams = [ "${var.worker_initial_upstreams}:9202" ]
 
       tags {
-        type = "public_instance"
+        type = "public_boundary_worker"
         cloud = "aws"
         region = "${var.aws_region}"
         unique_name = "${var.unique_name}-vm"
