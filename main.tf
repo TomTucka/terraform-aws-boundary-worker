@@ -51,10 +51,10 @@ locals {
 
     worker {
       auth_storage_path                     = "/etc/boundary-worker-data"
-      public_addr                           = "${var.worker_initial_upstreams}"
+      public_addr                           = "file:///etc/public_dns"
       controller_generated_activation_token = "${boundary_worker.pki_instance_worker.controller_generated_activation_token}"
 
-      initial_upstreams = [ "${var.worker_initial_upstreams}:9202" ]
+      initial_upstreams = [ "${var.worker_initial_upstreams}" ]
 
       tags {
         type = "public_boundary_worker"
