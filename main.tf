@@ -121,7 +121,9 @@ locals {
       ["sh", "-c", "curl -Ss https://checkip.amazonaws.com > /etc/public_ip"],
       ["sh", "-c", "host -t PTR $(curl -Ss https://checkip.amazonaws.com) | awk '{print substr($NF, 1, length($NF)-1)}' > /etc/public_dns"],
       ["systemctl", "disable", "--now", "boundary"],
-      ["systemctl", "enable", "--now", "apt-daily-upgrade.service", "apt-daily-upgrade.timer", "docker"]
+      ["systemctl", "enable", "--now", "apt-daily-upgrade.service", "apt-daily-upgrade.timer", "docker"],
+      ["systemctl", "enable", "--now", "boundary"],
+      ["systemctl", "start", "--now", "boundary"],
     ]
   }
 }
