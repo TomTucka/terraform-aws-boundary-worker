@@ -34,10 +34,21 @@ resource "boundary_worker" "pki_instance_worker" {
 
 locals {
   boundary_worker_unit_dropin = <<-WORKER_UNIT_DROPIN
+    [Unit]
+    Description=Boundary
+    Documentation=https://www.boundaryproject.io/docs/
+    Requires=network-online.target
+    After=network-online.target
+
     [Service]
-    ProtectSystem=off
-    ExecStart=
+    Environment=GOMAXPROCS=8
+    Restart=on-failure
     ExecStart=/usr/bin/boundary server -config=/etc/boundary.d/boundary-pki-worker-config.hcl
+    ExecReload=/bin/kill -HUP $MAINPID
+    KillSignal=SIGINT
+
+    [Install]
+    WantedBy=multi-user.target
     WORKER_UNIT_DROPIN
 
   boundary_instance_worker_config = <<-WORKER_CONFIG
@@ -89,7 +100,7 @@ locals {
       {
         content     = local.boundary_worker_unit_dropin
         owner       = "root:root"
-        path        = "/etc/systemd/system/boundary.service.d/10-execstart.conf"
+        path        = "/etc/systemd/system/boundary.service"
         permissions = "0644"
       },
       {
@@ -120,7 +131,6 @@ locals {
       ["chown", "boundary:boundary", "/etc/boundary-worker-data"],
       ["sh", "-c", "curl -Ss https://checkip.amazonaws.com > /etc/public_ip"],
       ["sh", "-c", "host -t PTR $(curl -Ss https://checkip.amazonaws.com) | awk '{print substr($NF, 1, length($NF)-1)}' > /etc/public_dns"],
-      ["systemctl", "disable", "--now", "boundary"],
       ["systemctl", "enable", "--now", "apt-daily-upgrade.service", "apt-daily-upgrade.timer", "docker"],
       ["systemctl", "enable", "--now", "boundary"],
       ["systemctl", "start", "--now", "boundary"],
