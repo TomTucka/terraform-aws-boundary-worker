@@ -64,6 +64,7 @@ locals {
       auth_storage_path                     = "/etc/boundary-worker-data"
       public_addr                           = "file:///etc/public_dns"
       controller_generated_activation_token = "${boundary_worker.pki_instance_worker.controller_generated_activation_token}"
+      recording_storage_path                = "/tmp/session-recordings"
 
       initial_upstreams = [ "${var.worker_initial_upstreams}" ]
 
@@ -120,6 +121,7 @@ locals {
     runcmd = [
       ["systemctl", "disable", "--now", "unattended-upgrades.service", "apt-daily-upgrade.service", "apt-daily-upgrade.timer"],
       ["apt", "install", "-y", "software-properties-common"],
+      ["mkdir", "/tmp/session-recordings"],
       ["apt-add-repository", "universe"],
       ["sh", "-c", "gpg --dearmor < /tmp/hashicorp-archive-keyring.gpg > /usr/share/keyrings/hashicorp-archive-keyring.gpg"],
       ["sh", "-c", "echo \"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" > /etc/apt/sources.list.d/hashicorp.list"],
